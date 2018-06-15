@@ -2,6 +2,7 @@
 {
     using System.IO;
     using System.Net;
+    using System.Threading.Tasks;
     using Logging.ExceptionSender;
     using MailKit.Net.Smtp;
     using Microsoft.AspNetCore.Hosting;
@@ -24,7 +25,7 @@
             this.options = options.Value;
         }
 
-        protected override void Send(ITask currentTask, string text, FileInfo logFile)
+        protected override Task SendAsync(ITask currentTask, string text, FileInfo logFile)
         {
             SmtpClient client = new SmtpClient();
             client.Connect(this.options.SmtpHost, this.options.SmtpPort, true);
@@ -53,6 +54,9 @@
             mailMessage.Body = bodyBuilder.ToMessageBody();
 
             client.Send(mailMessage);
+
+            return Task.FromResult(true);
         }
+
     }
 }
